@@ -1,0 +1,6 @@
+*.swp
+.idea
+server/appConfig.ini
+poc.html
+tweets.js
+node-server

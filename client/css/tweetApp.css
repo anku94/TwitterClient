@@ -1,0 +1,56 @@
+#tweets-input {
+    width: 100%;
+    margin: 25px auto;
+}
+
+#tweets-username_input {
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+}
+
+#tweets {
+    background: url(../images/ajax-loader.gif) no-repeat center center;
+    width: 100%;
+    height: 500px;
+    overflow: scroll;
+    border-radius: 5px;
+}
+
+.tweets-noload {
+    background: none !important;
+}
+
+.tweet-ls {
+    padding: 0;
+    margin: 0;
+}
+
+.tweet-ls li {
+    list-style-type: none;
+    padding: 12px;
+    word-wrap: break-word;
+}
+
+.tweet-ls li:nth-child(even) {
+    background-color: #EAF9EE;
+}
+
+.tweet-ls li:nth-child(odd) {
+    /*background-color: #B3EED4;*/
+    background-color: #F6FCF7;
+}
+
+.tweet-hashtag {
+    color: #B51638;
+}
+
+.tweet-mention {
+    color: #172FB3;
+}
+
+.loader-img {
+    margin: 0 auto;
+}
+
+
