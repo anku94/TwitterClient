@@ -14,6 +14,8 @@ var Tweet = function(string) {
 };
 
 Tweet.prototype.highlight = function() {
+    console.log(this);
+
     this.highlightedText = this.highlightedText.replace(/(@\w+\b)/g, "<span class=\"tweet-mention\">$1</span>");
     this.highlightedText = this.highlightedText.replace(/(#\w+\b)/g, "<span class=\"tweet-hashtag\">$1</span>");
     this.highlightedText = "<span class=\"tweet-data\">" + this.highlightedText + "</span>"

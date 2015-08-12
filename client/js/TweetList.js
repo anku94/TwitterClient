@@ -1,7 +1,10 @@
 "use strict";
 
-var TweetList = function() {
+var TweetList = function(tweetArray) {
     this.tweets = new Array();
+    if(tweetArray) {
+        this.tweets = this.tweets.concat(tweetArray);
+    }
 };
 
 TweetList.prototype.addTweet = function (tweet) {
@@ -21,7 +24,7 @@ TweetList.prototype.removeTweet = function (tweet) {
 }
 
 TweetList.prototype.appendList = function(newList) {
-    this.tweets.concat(newList.tweets);
+    this.tweets = this.tweets.concat(newList.tweets);
 };
 
 TweetList.prototype.forEach = function(func) {
@@ -29,7 +32,7 @@ TweetList.prototype.forEach = function(func) {
 }
 
 TweetList.prototype.filter = function(func) {
-    this.tweets = this.tweets.filter(func);
+    return new TweetList(this.tweets.filter(func));
 };
 
 TweetList.prototype.render = function() {
@@ -43,7 +46,7 @@ TweetList.prototype.render = function() {
         tweetElement.appendChild(tweetDom);
 
         listElement.appendChild(tweetElement);
-    });
+    }.bind(this));
 
     return listElement;
 };

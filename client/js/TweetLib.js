@@ -37,6 +37,7 @@ TweetLib.prototype.loadTweets = function() {
 };
 
 TweetLib.prototype.tweetsAvailableCallback = function(userName, tweetData) {
+    console.log("Callback", this);
     this.callbacksRemaining--;
 
     tweetData = JSON.parse(tweetData);
@@ -54,6 +55,22 @@ TweetLib.prototype.tweetsAvailableCallback = function(userName, tweetData) {
     this.checkLoadingCompleted();
 };
 
+TweetLib.prototype.filterListByHashtag = function (tweetList, hashtag) {
+    var currentList = tweetList.filter(function(tweet) {
+        return tweet.containsHashtag(hashtag);
+    });
+    return currentList;
+};
+
+TweetLib.prototype.filterListByMultipleHashtags = function (tweetList, hashtagList) {
+    var filteredList = new TweetList();
+    this.queryTerms.hashtags.forEach(function(hashtag) {
+            filteredList.appendList(this.filterListByHashtag(tweetList, hashtag));
+        }.bind(this)
+    );
+    return filteredList;
+};
+
 TweetLib.prototype.checkLoadingCompleted = function() {
     console.log("Pending callbacks", this.callbacksRemaining);
 
@@ -62,12 +79,18 @@ TweetLib.prototype.checkLoadingCompleted = function() {
     if(this.errorMessage) {
         this.tweetUI.displayText(this.errorMessage);
         this.errorMessage = null;
+    } else if(this.queryTerms.hashtags.length == 0) {
+        this.tweetUI.renderData(this.tweetList.render());
     } else {
-        this.queryTerms.hashtags.forEach(function(hashtag) {
-            this.tweetList.filter(function(tweet) {
-                return tweet.containsHashtag(hashtag);
-            });
-        }.bind(this));
+        console.log("Prefiltered list");
+        console.log(this.tweetList);
+
+        console.log(this.queryTerms.hashtags);
+        this.tweetList = this.filterListByMultipleHashtags(this.tweetList, this.queryTerms.hashtags);
+
+        console.log("Filtered list");
+        console.log(this.tweetList);
+
         this.tweetUI.renderData(this.tweetList.render());
     }
 };
