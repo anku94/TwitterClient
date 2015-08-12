@@ -15,7 +15,7 @@ TweetUI.prototype.init = function() {
     inputElement.type = "text";
     inputElement.name = "username";
     inputElement.id = "tweets-username_input";
-    inputElement.placeholder = "@twitterUser";
+    inputElement.placeholder = "@twitterUser, @anotherUser, ..., #firstHashtag, #secondHashtag, ...";
 
     inputNode.appendChild(inputElement);
 
