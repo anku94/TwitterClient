@@ -50,17 +50,3 @@ TweetList.prototype.render = function() {
 
     return listElement;
 };
-
-// Tests
-
-//var tweet1 = new Tweet("hello world");
-//var tweet2 = new Tweet("bye world");
-//
-//var ls =  new TweetList();
-//ls.addTweet(tweet1);
-//ls.addTweet(tweet2);
-//
-//ls.filter(function(tweet) {
-//    var res = /bye/.test(tweet.text);
-//    return res;
-//});

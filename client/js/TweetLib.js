@@ -82,15 +82,7 @@ TweetLib.prototype.checkLoadingCompleted = function() {
     } else if(this.queryTerms.hashtags.length == 0) {
         this.tweetUI.renderData(this.tweetList.render());
     } else {
-        console.log("Prefiltered list");
-        console.log(this.tweetList);
-
-        console.log(this.queryTerms.hashtags);
         this.tweetList = this.filterListByMultipleHashtags(this.tweetList, this.queryTerms.hashtags);
-
-        console.log("Filtered list");
-        console.log(this.tweetList);
-
         this.tweetUI.renderData(this.tweetList.render());
     }
 };
