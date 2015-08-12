@@ -16,9 +16,12 @@ def display_root():
 @app.route("/tweets/<userName>")
 @crossdomain("*")
 def display_tweets(userName):
-    tweets = twitter_api.get_tweets(userName)
-    return jsonify({'tweets': tweets})
-    
+    resp = twitter_api.get_tweets(userName)
+
+    if resp['data']:
+        return jsonify({'tweets': resp['data']})
+    else:
+        return jsonify({'tweets': None, 'error': resp['error']})
 
 if __name__ == "__main__":
     app.debug = True

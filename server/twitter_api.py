@@ -36,11 +36,15 @@ def init():
             );
 
 def get_tweets(user_name):
-    tweets = api.GetUserTimeline(screen_name=user_name, count=10)
-    tweetData = []
-    for tweet in tweets:
-        if tweet.retweeted_status:
-            tweetData.append("RT @" + tweet.retweeted_status.user.screen_name + ": " + hp.unescape(tweet.retweeted_status.text))
-        else:
-            tweetData.append(hp.unescape(tweet.text))
-    return tweetData
+    try:
+        tweets = api.GetUserTimeline(screen_name=user_name, count=10)
+    except twitter.TwitterError as e:
+        return {'data': None, 'error': 'Invalid screen name'}
+    else:
+        tweetData = []
+        for tweet in tweets:
+            if tweet.retweeted_status:
+                tweetData.append("RT @" + tweet.retweeted_status.user.screen_name + ": " + hp.unescape(tweet.retweeted_status.text))
+            else:
+                tweetData.append(hp.unescape(tweet.text))
+        return {'data': tweetData}
