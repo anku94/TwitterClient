@@ -30,8 +30,12 @@ TweetUI.prototype.init = function() {
     var tweetContainer = document.createElement("div");
     tweetContainer.className = "tweets-container";
 
+    var mentionDiv = document.createElement("div");
+    mentionDiv.className = "tweets-users-checklist";
+
     tweetsNode.appendChild(checkboxDiv);
     tweetsNode.appendChild(tweetContainer);
+    tweetsNode.appendChild(mentionDiv);
 
     uiParent.appendChild(inputNode);
     uiParent.appendChild(tweetsNode);
@@ -41,6 +45,7 @@ TweetUI.prototype.init = function() {
     this.tweetDiv = tweetsNode;
     this.tweetHolder = tweetContainer;
     this.hashtagDiv = checkboxDiv;
+    this.mentionDiv = mentionDiv;
 
     // ---------------------------------------------
 
@@ -75,5 +80,15 @@ TweetUI.prototype.renderHashtags = function(dataDom) {
 
     for(var i = 0; i < l; i++) {
         this.hashtagDiv.appendChild(nodes[0]);
+    }
+};
+
+TweetUI.prototype.renderMentions = function(dataDom) {
+    this.mentionDiv.innerText = "";
+    var nodes = dataDom.children;
+    var l = nodes.length;
+
+    for(var i = 0; i < l; i++) {
+        this.mentionDiv.appendChild(nodes[0]);
     }
 };

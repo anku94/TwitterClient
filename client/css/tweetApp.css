@@ -18,7 +18,15 @@
 
 .tweets-hashtags-checklist {
     float: left;
-    width: 25%;
+    width: 22%;
+    height: 100%;
+    background-color: #F6FCF7;
+    overflow: scroll;
+}
+
+.tweets-users-checklist {
+    float: left;
+    width: 22%;
     height: 100%;
     background-color: #F6FCF7;
     overflow: scroll;
@@ -26,7 +34,7 @@
 
 .tweets-container {
     float: left;
-    width: 70%;
+    width: 50%;
     height: 100%;
     overflow: scroll;
 }

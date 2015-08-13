@@ -10,18 +10,30 @@ window.addEventListener("load", function(){
         var target = e.target;
         if(target.nodeName == "INPUT") {
             if(target.checked) {
-                // filter - hide elements
                 tweetLib.activeHashtags.push(target.value);
             } else {
-                // remove from list of filters
                 var idx = tweetLib.activeHashtags.indexOf(target.value);
                 if(idx > -1) {
                     tweetLib.activeHashtags.splice(idx, 1);
                 }
             }
 
-            console.log(tweetLib.activeHashtags);
-            tweetLib.hideAllBut(tweetLib.activeHashtags);
+            tweetLib.showRelevantTweets();
+        }
+    });
+
+    tweetUI.mentionDiv.addEventListener("click", function(e) {
+        var target = e.target;
+        if(target.nodeName == "INPUT") {
+            if(target.checked) {
+                tweetLib.activeMentions.push(target.value);
+            } else {
+                var idx = tweetLib.activeMentions.indexOf(target.value);
+                if(idx > -1) {
+                    tweetLib.activeMentions.splice(idx, 1);
+                }
+            }
+            tweetLib.showRelevantTweets();
         }
     });
 });

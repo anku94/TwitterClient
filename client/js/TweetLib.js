@@ -9,6 +9,7 @@ var TweetLib = function() {
     this.queryTerms = null;
 
     this.activeHashtags = new Array();
+    this.activeMentions = new Array();
 };
 
 TweetLib.prototype.parseInput = function(inputStr) {
@@ -39,19 +40,6 @@ TweetLib.prototype.loadTweets = function() {
     }.bind(this));
 };
 
-TweetLib.prototype.hideAllBut = function (hashtagArray) {
-    if(hashtagArray.length == 0) {
-        this.tweetList.show();
-        return;
-    }
-
-    this.tweetList.hide();
-
-    hashtagArray.forEach(function(hashtag) {
-        this.getListContainingHashtag(this.tweetList, hashtag).show();
-    }.bind(this));
-};
-
 TweetLib.prototype.tweetsAvailableCallback = function(userName, tweetData) {
     this.callbacksRemaining--;
 
@@ -70,37 +58,6 @@ TweetLib.prototype.tweetsAvailableCallback = function(userName, tweetData) {
     this.checkLoadingCompleted();
 };
 
-TweetLib.prototype.getListContainingHashtag = function (tweetList, hashtag) {
-    var currentList = tweetList.filter(function(tweet) {
-        return tweet.containsHashtag(hashtag);
-    });
-    return currentList;
-};
-
-TweetLib.prototype.getListNotContainingHashtag = function (tweetList, hashtag) {
-    var currentList = tweetList.filter(function(tweet) {
-        return (!tweet.containsHashtag(hashtag));
-    });
-    return currentList;
-};
-
-TweetLib.prototype.filterListByMultipleHashtags = function (tweetList, hashtagList) {
-    var filteredList = new TweetList();
-    this.queryTerms.hashtags.forEach(function(hashtag) {
-            filteredList.appendList(this.getListContainingHashtag(tweetList, hashtag));
-        }.bind(this)
-    );
-    return filteredList;
-};
-
-TweetLib.prototype.getAllHashtags = function(tweetList) {
-    var hashtagList = new HashtagList();
-    tweetList.forEach(function(tweet) {
-        hashtagList.addHashtagsFromStringArray(tweet.hashtags);
-    });
-    return hashtagList;
-};
-
 TweetLib.prototype.checkLoadingCompleted = function() {
     console.log("Pending callbacks", this.callbacksRemaining);
 
@@ -113,13 +70,9 @@ TweetLib.prototype.checkLoadingCompleted = function() {
         this.tweetUI.renderData(this.tweetList.render());
 
         this.hashtagList = this.getAllHashtags(this.tweetList);
+        this.mentionList = this.getAllMentions(this.tweetList);
         this.tweetUI.renderHashtags(this.hashtagList.getDOM());
-    } else {
-        this.tweetList = this.filterListByMultipleHashtags(this.tweetList, this.queryTerms.hashtags);
-        this.tweetUI.renderData(this.tweetList.render());
-
-        this.hashtagList = this.getAllHashtags(this.tweetList);
-        this.tweetUI.renderHashtags(this.hashtagList.getDOM());
+        this.tweetUI.renderMentions(this.mentionList.getDOM());
     }
 };
 
@@ -139,4 +92,13 @@ TweetLib.prototype.inputAvailableCallback = function(e) {
 
 TweetLib.prototype.getUIContext = function() {
     return this.tweetUI;
-}
+};
+
+TweetLib.prototype.showRelevantTweets = function() {
+    tweetLib.tweetList.hide();
+    var filteredList = tweetLib.filterTweetsContainingHashtags(tweetLib.tweetList, tweetLib.activeHashtags);
+    console.log("Filtered Hash List", filteredList);
+    var filteredList = tweetLib.filterTweetsContainingMentions(filteredList, tweetLib.activeMentions);
+    console.log("Filtered Mention List", filteredList);
+    filteredList.show();
+};
