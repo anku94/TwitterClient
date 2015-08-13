@@ -15,7 +15,7 @@ TweetUI.prototype.init = function() {
     inputElement.type = "text";
     inputElement.name = "username";
     inputElement.id = "tweets-username_input";
-    inputElement.placeholder = "@twitterUser, @anotherUser, ..., #firstHashtag, #secondHashtag, ...";
+    inputElement.placeholder = "@twitterUser, @anotherUser, ...";
 
     inputNode.appendChild(inputElement);
 
@@ -24,12 +24,23 @@ TweetUI.prototype.init = function() {
     var tweetsNode = document.createElement("div");
     tweetsNode.id = "tweets";
 
+    var checkboxDiv = document.createElement("div");
+    checkboxDiv.className = "tweets-hashtags-checklist";
+
+    var tweetContainer = document.createElement("div");
+    tweetContainer.className = "tweets-container";
+
+    tweetsNode.appendChild(checkboxDiv);
+    tweetsNode.appendChild(tweetContainer);
+
     uiParent.appendChild(inputNode);
     uiParent.appendChild(tweetsNode);
 
     this.uiParent = uiParent;
     this.inputDiv = inputNode;
     this.tweetDiv = tweetsNode;
+    this.tweetHolder = tweetContainer;
+    this.hashtagDiv = checkboxDiv;
 
     // ---------------------------------------------
 
@@ -53,6 +64,16 @@ TweetUI.prototype.displayText = function(string) {
 };
 
 TweetUI.prototype.renderData = function(dataDom) {
-    this.tweetDiv.innerText = "";
-    this.tweetDiv.appendChild(dataDom);
+    this.tweetHolder.innerText = "";
+    this.tweetHolder.appendChild(dataDom);
+};
+
+TweetUI.prototype.renderHashtags = function(dataDom) {
+    this.hashtagDiv.innerText = "";
+    var nodes = dataDom.children;
+    var l = nodes.length;
+
+    for(var i = 0; i < l; i++) {
+        this.hashtagDiv.appendChild(nodes[0]);
+    }
 };

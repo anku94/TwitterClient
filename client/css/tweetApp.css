@@ -13,8 +13,22 @@
     background: url(../images/ajax-loader.gif) no-repeat center center;
     width: 100%;
     height: 500px;
-    overflow: scroll;
     border-radius: 5px;
+}
+
+.tweets-hashtags-checklist {
+    float: left;
+    width: 25%;
+    height: 100%;
+    background-color: #F6FCF7;
+    overflow: scroll;
+}
+
+.tweets-container {
+    float: left;
+    width: 70%;
+    height: 100%;
+    overflow: scroll;
 }
 
 .tweets-noload {
@@ -29,6 +43,7 @@
 .tweet-ls li {
     list-style-type: none;
     padding: 12px;
+    padding-left: 10px;
     word-wrap: break-word;
 }
 
@@ -37,7 +52,6 @@
 }
 
 .tweet-ls li:nth-child(odd) {
-    /*background-color: #B3EED4;*/
     background-color: #F6FCF7;
 }
 
@@ -51,6 +65,19 @@
 
 .loader-img {
     margin: 0 auto;
+}
+
+.checkbox-element {
+    padding: 15px;
+    word-wrap: break-word;
+}
+
+.checkbox-element:nth-child(odd) {
+    background-color: #D4F4FF;
+}
+
+.checkbox-element:nth-child(even) {
+    background-color: #EDF9FC;
 }
 
 

@@ -1,2 +1,3 @@
 #!/bin/bash
-python server/tweet_server.py
+cd server
+python tweet_server.py
