@@ -55,4 +55,4 @@ TweetUI.prototype.displayText = function(string) {
 TweetUI.prototype.renderData = function(dataDom) {
     this.tweetDiv.innerText = "";
     this.tweetDiv.appendChild(dataDom);
-}
+};
