@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 var Tweet = function(string) {
     this.text = string;

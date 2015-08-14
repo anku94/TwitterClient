@@ -7,19 +7,14 @@ var TweetLib = function() {
     this.callbacksRemaining = 0;
     this.errorMessage = null;
     this.queryTerms = null;
-
-    this.activeHashtags = new Array();
-    this.activeMentions = new Array();
 };
 
 TweetLib.prototype.parseInput = function(inputStr) {
     var inputElements = inputStr.split(",");
-    var response = {screen_names: [], hashtags: []};
+    var response = {screen_names: []};
     inputElements.forEach(function(element) {
         element = element.trim();
-        if(element.startsWith('#')) {
-            response.hashtags.push(element.slice(1, element.length));
-        } else if(element.startsWith('@')) {
+        if(element.startsWith('@')) {
             response.screen_names.push(element.slice(1, element.length));
         }
     });
@@ -28,7 +23,8 @@ TweetLib.prototype.parseInput = function(inputStr) {
 
 TweetLib.prototype.loadTweets = function() {
     this.tweetList = new TweetList();
-    this.activeHashtags = new Array();
+    mentionFilter.reset();
+    hashtagFilter.reset();
 
     var inputData = this.tweetUI.inputDiv.childNodes[0].value;
     this.queryTerms = this.parseInput(inputData);
@@ -49,7 +45,7 @@ TweetLib.prototype.tweetsAvailableCallback = function(userName, tweetData) {
         this.tweetList.addTweetsFromStringArray(tweetData['tweets']);
     } else {
         if(this.errorMessage) {
-            this.errorMessage = "Multiple error";
+            this.errorMessage = "Multiple errors";
         } else {
             this.errorMessage = "Invalid handle";
         }
@@ -66,13 +62,14 @@ TweetLib.prototype.checkLoadingCompleted = function() {
     if(this.errorMessage) {
         this.tweetUI.displayText(this.errorMessage);
         this.errorMessage = null;
-    } else if(this.queryTerms.hashtags.length == 0) {
+    } else {
         this.tweetUI.renderData(this.tweetList.render());
 
-        this.hashtagList = this.getAllHashtags(this.tweetList);
-        this.mentionList = this.getAllMentions(this.tweetList);
-        this.tweetUI.renderHashtags(this.hashtagList.getDOM());
-        this.tweetUI.renderMentions(this.mentionList.getDOM());
+        mentionFilter.extractTags(this.tweetList);
+        mentionFilter.loadInside(this.tweetUI.mentionDiv);
+
+        hashtagFilter.extractTags(this.tweetList);
+        hashtagFilter.loadInside(this.tweetUI.hashtagDiv);
     }
 };
 
@@ -96,9 +93,9 @@ TweetLib.prototype.getUIContext = function() {
 
 TweetLib.prototype.showRelevantTweets = function() {
     tweetLib.tweetList.hide();
-    var filteredList = tweetLib.filterTweetsContainingHashtags(tweetLib.tweetList, tweetLib.activeHashtags);
+    var filteredList = hashtagFilter.returnFilteredElements(tweetLib.tweetList);
     console.log("Filtered Hash List", filteredList);
-    var filteredList = tweetLib.filterTweetsContainingMentions(filteredList, tweetLib.activeMentions);
+    var filteredList = mentionFilter.returnFilteredElements(filteredList);
     console.log("Filtered Mention List", filteredList);
     filteredList.show();
 };
