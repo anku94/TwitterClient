@@ -1,16 +1,18 @@
 "use strict";
 
-var CheckboxFilter = function(extractDataFunc, displayFunc, reloadFunc, propertyName, elementClassName) {
+var CheckboxFilter = function(propertyName, extractDataFunc, displayFunc) {
     this.propertyName = propertyName;
-    this.elementClassName = elementClassName;
+
+    this.elementClassName = "checkbox-element";
 
     this.extractDataFrom = extractDataFunc;
     this.getDisplayString = displayFunc;
-    this.reloadFunc = reloadFunc;
+    this.reloadFunc = null;
 
     this.activeFilterTags = new Array();
     this.totalFilterTags = new Array();
     this.elementDoms = new Array();
+
 };
 
 CheckboxFilter.prototype.reset = function() {
@@ -41,6 +43,10 @@ CheckboxFilter.prototype.returnFilteredElements = function(list) {
     }.bind(this));
 
     return filteredList;
+};
+
+CheckboxFilter.prototype.registerReloadCallback = function(callback) {
+    this.reloadFunc = callback;
 };
 
 CheckboxFilter.prototype.generateElementDom = function(element) {
@@ -87,7 +93,8 @@ CheckboxFilter.prototype.loadInside = function(parentDOM) {
             }
         }
 
-        this.reloadFunc();
+        if(this.reloadFunc)
+            this.reloadFunc();
     }.bind(this));
 };
 

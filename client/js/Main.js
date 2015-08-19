@@ -1,39 +1,64 @@
 "use strict";
 
-var tweetLib = new TweetLib();
-var tweetUI = tweetLib.getUIContext();
+(function() {
+    var tweetLoader = new TweetLoader();
+    var tweetUI = new TweetUI();
+    var queryParser = new QueryParser();
 
-
-var extractMention = function(tweet) {
-    var resp = tweet.mentions;
-
-    resp.forEach(function(mention) {
-        if(mention.startsWith('@')) {
-            mention.splice(1, 1);
-        }
+    var mentionFilter = new CheckboxFilter("mention", function (tweet) {
+        return tweet.mentions;
+    }, function (str) {
+        return '@'.concat(str);
     });
-    return resp;
-};
 
-var displayMention = function(str) {
-    if(!(str.startsWith('@'))) {
-        str = '@'.concat(str);
-    }
-    return str;
-};
+    var hashtagFilter = new CheckboxFilter("hashtag", function (tweet) {
+        return tweet.hashtags;
+    }, function (str) {
+        return '#'.concat(str);
+    });
 
-var extractHashtag = function(tweet) {
-    return tweet.hashtags;
-};
+    var inputAvailableCallback = function (e) {
+        if (e.keyCode == 13) {
+            var query = tweetUI.getInput();
+            var parsedQuery = queryParser.parseQuery(query);
+            tweetLoader.loadTweets(parsedQuery);
+        }
+    };
 
-var displayHashtag = function(str) {
-    return '#'.concat(str);
-}
+    var loadingCompletedCallback = function (data, error) {
+        console.log(data, error);
+        if (data) {
+            data.loadInside(tweetUI.centerPane);
+            hashtagFilter.reset();
+            hashtagFilter.extractTags(data);
+            hashtagFilter.loadInside(tweetUI.leftPane);
 
-var mentionFilter = new CheckboxFilter(extractMention, displayMention, tweetLib.showRelevantTweets, "mention", "checkbox-element");
-var hashtagFilter = new CheckboxFilter(extractHashtag, displayHashtag, tweetLib.showRelevantTweets, "hashtag", "checkbox-element");
+            mentionFilter.reset();
+            mentionFilter.extractTags(data);
+            mentionFilter.loadInside(tweetUI.rightPane)
+        } else {
+            TweetUI.displayMessage(error);
+        }
+    };
 
-window.addEventListener("load", function(){
-    tweetUI.init();
-    tweetUI.inputDiv.children[0].addEventListener("keypress", tweetLib.inputAvailableCallback);
-});
+    var applyFiltersCallback = function (e) {
+        console.log(e);
+
+        var tweetList = tweetLoader.tweetList;
+        tweetList.hide();
+        var filteredList = hashtagFilter.returnFilteredElements(tweetList);
+        var filteredList = mentionFilter.returnFilteredElements(filteredList);
+        filteredList.show();
+    };
+
+    window.addEventListener("load", function () {
+        var uiDiv = document.querySelector(".tweet-client");
+
+        tweetUI.loadInside(uiDiv);
+        
+        tweetUI.registerInputAvailableCallback(inputAvailableCallback);
+        tweetLoader.registerLoadingCompletedCallback(loadingCompletedCallback)
+        hashtagFilter.registerReloadCallback(applyFiltersCallback);
+        mentionFilter.registerReloadCallback(applyFiltersCallback);
+    });
+})();

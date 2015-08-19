@@ -1,94 +1,93 @@
 "use strict";
 
 var TweetUI = function() {
+    this.domParent = null;
+    this.contentDiv = null;
+
+    this.inputDiv = this.createInputDiv();
+
+    this.leftPane = this.createLeftPane();
+    this.centerPane = this.createCenterPane();
+    this.rightPane = this.createRightPane();
+
+    this.inputEventListener = null;
 };
 
-TweetUI.prototype.init = function() {
-    var uiParent = document.querySelector(".tweet-client");
+TweetUI.prototype.createElementWithId = function(tag, id) {
+    var node = document.createElement(tag);
+    node.id = id;
 
-    uiParent.innerText = "";
+    return node;
+};
 
-    var inputNode = document.createElement("div");
-    inputNode.id = "tweets-input";
+TweetUI.prototype.createInputDiv = function() {
+    var inputNode = this.createElementWithId("div", "tweets-input");
 
-    var inputElement = document.createElement("input");
+    var inputElement = this.createElementWithId("input", "tweets-username-input");
     inputElement.type = "text";
     inputElement.name = "username";
-    inputElement.id = "tweets-username_input";
     inputElement.placeholder = "@twitterUser, @anotherUser, ...";
 
     inputNode.appendChild(inputElement);
 
-    // ---------------------------------------------
+    return inputNode;
+};
 
-    var tweetsNode = document.createElement("div");
-    tweetsNode.id = "tweets";
+TweetUI.prototype.createLeftPane = function() {
+    return this.createElementWithId("div", "left-pane");
+};
 
-    var checkboxDiv = document.createElement("div");
-    checkboxDiv.className = "tweets-hashtags-checklist";
+TweetUI.prototype.createCenterPane = function() {
+    return this.createElementWithId("div", "center-pane");
+};
 
-    var tweetContainer = document.createElement("div");
-    tweetContainer.className = "tweets-container";
+TweetUI.prototype.createRightPane = function() {
+    return this.createElementWithId("div", "right-pane");
+};
 
-    var mentionDiv = document.createElement("div");
-    mentionDiv.className = "tweets-users-checklist";
+TweetUI.prototype.loadInside = function (domParent) {
+    this.domParent = domParent;
 
-    tweetsNode.appendChild(checkboxDiv);
-    tweetsNode.appendChild(tweetContainer);
-    tweetsNode.appendChild(mentionDiv);
+    // Empty the parent div
+    domParent.innerText = "";
 
-    uiParent.appendChild(inputNode);
-    uiParent.appendChild(tweetsNode);
+    // Create a container div with all three panes
+    this.contentDiv = document.createElement("div");
+    this.contentDiv.id = "tweets";
 
-    this.uiParent = uiParent;
-    this.inputDiv = inputNode;
-    this.tweetDiv = tweetsNode;
-    this.tweetHolder = tweetContainer;
-    this.hashtagDiv = checkboxDiv;
-    this.mentionDiv = mentionDiv;
+    this.contentDiv.appendChild(this.leftPane);
+    this.contentDiv.appendChild(this.centerPane);
+    this.contentDiv.appendChild(this.rightPane);
 
-    // ---------------------------------------------
+    this.domParent.appendChild(this.inputDiv);
+    this.domParent.appendChild(this.contentDiv);
 
     this.hideLoader();
+
+};
+
+TweetUI.prototype.getInput = function() {
+    return this.inputDiv.children[0].value;
 };
 
 TweetUI.prototype.hideLoader = function() {
-    this.tweetDiv.classList.add("tweets-noload");
+    this.contentDiv.classList.add("tweets-noload");
 };
 
 TweetUI.prototype.showLoader = function() {
-    this.tweetDiv.classList.remove("tweets-noload");
+    this.contentDiv.classList.remove("tweets-noload");
 };
 
-TweetUI.prototype.displayText = function(string) {
-    var messageElement = document.createElement("span");
+TweetUI.prototype.displayMessage = function(string) {
+    var messageElement = document.createElement("div");
     messageElement.classList.add("tweet-message");
     messageElement.innerText = string;
 
-    this.renderData(messageElement);
+    this.centerPane.innerText = "";
+    this.centerPane.appendChild(messageElement);
 };
 
-TweetUI.prototype.renderData = function(dataDom) {
-    this.tweetHolder.innerText = "";
-    this.tweetHolder.appendChild(dataDom);
-};
-
-TweetUI.prototype.renderHashtags = function(dataDom) {
-    this.hashtagDiv.innerText = "";
-    var nodes = dataDom.children;
-    var l = nodes.length;
-
-    for(var i = 0; i < l; i++) {
-        this.hashtagDiv.appendChild(nodes[0]);
-    }
-};
-
-TweetUI.prototype.renderMentions = function(dataDom) {
-    this.mentionDiv.innerText = "";
-    var nodes = dataDom.children;
-    var l = nodes.length;
-
-    for(var i = 0; i < l; i++) {
-        this.mentionDiv.appendChild(nodes[0]);
-    }
+TweetUI.prototype.registerInputAvailableCallback = function(callback) {
+    var inputTextbox = this.inputDiv.children[0];
+    this.inputEventListener = inputTextbox.addEventListener("keypress", callback);
 };

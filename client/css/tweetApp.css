@@ -3,7 +3,7 @@
     margin: 25px auto;
 }
 
-#tweets-username_input {
+#tweets-username-input {
     display: block;
     width: 400px;
     margin: 0 auto;
@@ -16,7 +16,7 @@
     border-radius: 5px;
 }
 
-.tweets-hashtags-checklist {
+#left-pane {
     float: left;
     width: 22%;
     height: 100%;
@@ -24,7 +24,7 @@
     overflow: scroll;
 }
 
-.tweets-users-checklist {
+#right-pane {
     float: left;
     width: 22%;
     height: 100%;
@@ -32,7 +32,7 @@
     overflow: scroll;
 }
 
-.tweets-container {
+#center-pane {
     float: left;
     width: 50%;
     height: 100%;
@@ -88,4 +88,7 @@
     background-color: #EDF9FC;
 }
 
+.tweet-message {
+    margin: 40px;
+}
 

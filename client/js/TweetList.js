@@ -47,7 +47,7 @@ TweetList.prototype.show = function() {
     });
 };
 
-TweetList.prototype.render = function() {
+TweetList.prototype.loadInside = function(domParent) {
     var listElement = document.createElement("ul");
     listElement.className = "tweet-ls";
 
@@ -61,5 +61,6 @@ TweetList.prototype.render = function() {
         tweet.setParentDOM(tweetElement);
     }.bind(this));
 
-    return listElement;
+    domParent.innerText = "";
+    domParent.appendChild(listElement);
 };
