@@ -5,23 +5,24 @@ var TweetList = function(tweetList) {
     if(tweetList) {
         this.tweets = this.tweets.concat(tweetList);
     }
+
 };
 
 TweetList.prototype.addTweet = function (tweet) {
     this.tweets.push(tweet);
-}
+};
 
 TweetList.prototype.addTweetsFromStringArray = function(ls) {
     ls.forEach(function(tweetString) {
         var tweet = new Tweet(tweetString);
         this.tweets.push(tweet);
     }.bind(this));
-}
+};
 
 TweetList.prototype.removeTweet = function (tweet) {
     var index = this.tweets.indexOf(tweet);
     if(index >= 0) this.tweets.splice(index, 1);
-}
+};
 
 TweetList.prototype.appendList = function(newList) {
     this.tweets = this.tweets.concat(newList.tweets);
@@ -29,7 +30,7 @@ TweetList.prototype.appendList = function(newList) {
 
 TweetList.prototype.forEach = function(func) {
     this.tweets.forEach(func);
-}
+};
 
 TweetList.prototype.filter = function(func) {
     return new TweetList(this.tweets.filter(func));
@@ -46,6 +47,7 @@ TweetList.prototype.show = function() {
         tweet.show();
     });
 };
+
 
 TweetList.prototype.loadInside = function(domParent) {
     var listElement = document.createElement("ul");

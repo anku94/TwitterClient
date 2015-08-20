@@ -46,13 +46,11 @@ TweetLoader.prototype.checkLoadingCompleted = function() {
 
     if(this.callbacksRemaining > 0) return;
 
-    if(this.errorMessage) {
-        if(this.loadingCompletedCallback)
-            this.loadingCompletedCallback(null, this.errorMessage);
-    } else {
-        if(this.loadingCompletedCallback)
-            this.loadingCompletedCallback(this.tweetList, null);
-    }
+    var response = new Object();
+    response.tweets = this.tweetList;
+    if(this.errorMessage) response.error = this.errorMessage;
+
+    this.loadingCompletedCallback(response);
 };
 
 TweetLoader.prototype.tweetsNotLoadedCallback = function() {
@@ -65,6 +63,6 @@ TweetLoader.prototype.tweetsNotLoadedCallback = function() {
 
 TweetLoader.prototype.inputAvailableCallback = function(e) {
     if(e.which == 13) {
-        tweetLoader.loadTweets();
+        this.loadTweets();
     }
 };

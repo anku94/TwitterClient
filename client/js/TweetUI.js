@@ -1,6 +1,7 @@
 "use strict";
+var TweetUI = function () {
+    this.queryParser = new QueryParser();
 
-var TweetUI = function() {
     this.domParent = null;
     this.contentDiv = null;
 
@@ -13,14 +14,14 @@ var TweetUI = function() {
     this.inputEventListener = null;
 };
 
-TweetUI.prototype.createElementWithId = function(tag, id) {
+TweetUI.prototype.createElementWithId = function (tag, id) {
     var node = document.createElement(tag);
     node.id = id;
 
     return node;
 };
 
-TweetUI.prototype.createInputDiv = function() {
+TweetUI.prototype.createInputDiv = function () {
     var inputNode = this.createElementWithId("div", "tweets-input");
 
     var inputElement = this.createElementWithId("input", "tweets-username-input");
@@ -33,15 +34,15 @@ TweetUI.prototype.createInputDiv = function() {
     return inputNode;
 };
 
-TweetUI.prototype.createLeftPane = function() {
+TweetUI.prototype.createLeftPane = function () {
     return this.createElementWithId("div", "left-pane");
 };
 
-TweetUI.prototype.createCenterPane = function() {
+TweetUI.prototype.createCenterPane = function () {
     return this.createElementWithId("div", "center-pane");
 };
 
-TweetUI.prototype.createRightPane = function() {
+TweetUI.prototype.createRightPane = function () {
     return this.createElementWithId("div", "right-pane");
 };
 
@@ -66,19 +67,19 @@ TweetUI.prototype.loadInside = function (domParent) {
 
 };
 
-TweetUI.prototype.getInput = function() {
+TweetUI.prototype.getInput = function () {
     return this.inputDiv.children[0].value;
 };
 
-TweetUI.prototype.hideLoader = function() {
+TweetUI.prototype.hideLoader = function () {
     this.contentDiv.classList.add("tweets-noload");
 };
 
-TweetUI.prototype.showLoader = function() {
+TweetUI.prototype.showLoader = function () {
     this.contentDiv.classList.remove("tweets-noload");
 };
 
-TweetUI.prototype.displayMessage = function(string) {
+TweetUI.prototype.displayMessage = function (string) {
     var messageElement = document.createElement("div");
     messageElement.classList.add("tweet-message");
     messageElement.innerText = string;
@@ -87,7 +88,21 @@ TweetUI.prototype.displayMessage = function(string) {
     this.centerPane.appendChild(messageElement);
 };
 
-TweetUI.prototype.registerInputAvailableCallback = function(callback) {
-    var inputTextbox = this.inputDiv.children[0];
-    this.inputEventListener = inputTextbox.addEventListener("keypress", callback);
+TweetUI.prototype.getInputTextBoxDOM = function() {
+    return this.inputDiv.children[0];
+}
+
+TweetUI.prototype.registerInputAvailableCallback = function (callback) {
+    var inputTextbox = this.getInputTextBoxDOM();
+    console.log(inputTextbox);
+    this.inputEventListener = inputTextbox.addEventListener("keypress", _.partial(this.handleInput, _, callback).bind(this));
+};
+
+TweetUI.prototype.handleInput = function (e, callback) {
+    if (e.keyCode == 13) {
+        var query = this.getInput();
+        console.log("Query", query);
+        var parsedQuery = this.queryParser.parseQuery(query);
+        callback(parsedQuery);
+    }
 };
