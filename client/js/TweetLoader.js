@@ -3,6 +3,8 @@
 var TweetLoader = function() {
     this.apiClient = new ApiClient("http://localhost:5000");
 
+    this.tweetList = new TweetList();
+
     this.callbacksRemaining = 0;
     this.errorMessage = null;
 
@@ -10,16 +12,16 @@ var TweetLoader = function() {
 };
 
 TweetLoader.prototype.loadTweets = function(inputQuery) {
-    this.tweetList = new TweetList();
+    this.tweetList.reset();
 
     this.callbacksRemaining = inputQuery.mentions.length;
 
     inputQuery.mentions.forEach(function(userName) {
-        this.apiClient.fetchTweets(userName, this.tweetsAvailableCallback.bind(this, userName), this.tweetsNotLoadedCallback.bind(this));
+        this.apiClient.fetchTweets(userName, this.tweetsAvailableCallback.bind(this, userName), this.tweetsNotLoadedCallback);
     }.bind(this));
 };
 
-TweetLoader.prototype.registerLoadingCompletedCallback = function(callback) {
+TweetLoader.prototype.setOnloadCallback = function(callback) {
     this.loadingCompletedCallback = callback;
 };
 
@@ -29,7 +31,7 @@ TweetLoader.prototype.tweetsAvailableCallback = function(userName, tweetData) {
     tweetData = JSON.parse(tweetData);
 
     if(tweetData.tweets) {
-        this.tweetList.addTweetsFromStringArray(tweetData['tweets']);
+        this.tweetList.addTweets(tweetData['tweets']);
     } else {
         if(this.errorMessage) {
             this.errorMessage = "Multiple errors";
@@ -46,7 +48,7 @@ TweetLoader.prototype.checkLoadingCompleted = function() {
 
     if(this.callbacksRemaining > 0) return;
 
-    var response = new Object();
+    var response = {};
     response.tweets = this.tweetList;
     if(this.errorMessage) response.error = this.errorMessage;
 
@@ -58,11 +60,5 @@ TweetLoader.prototype.tweetsNotLoadedCallback = function() {
         this.errorMessage = "Multiple Errors";
     } else {
         this.errorMessage = "Internal Error";
-    }
-};
-
-TweetLoader.prototype.inputAvailableCallback = function(e) {
-    if(e.which == 13) {
-        this.loadTweets();
     }
 };

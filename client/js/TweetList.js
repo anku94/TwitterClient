@@ -1,39 +1,22 @@
 "use strict";
 
-var TweetList = function(tweetList) {
-    this.tweets = new Array();
-    if(tweetList) {
-        this.tweets = this.tweets.concat(tweetList);
-    }
-
+var TweetList = function() {
+    this.tweets = [];
 };
 
-TweetList.prototype.addTweet = function (tweet) {
-    this.tweets.push(tweet);
+TweetList.prototype.reset = function() {
+    this.tweets = [];
 };
 
-TweetList.prototype.addTweetsFromStringArray = function(ls) {
+TweetList.prototype.addTweets = function(ls) {
     ls.forEach(function(tweetString) {
         var tweet = new Tweet(tweetString);
         this.tweets.push(tweet);
     }.bind(this));
 };
 
-TweetList.prototype.removeTweet = function (tweet) {
-    var index = this.tweets.indexOf(tweet);
-    if(index >= 0) this.tweets.splice(index, 1);
-};
-
-TweetList.prototype.appendList = function(newList) {
-    this.tweets = this.tweets.concat(newList.tweets);
-};
-
 TweetList.prototype.forEach = function(func) {
     this.tweets.forEach(func);
-};
-
-TweetList.prototype.filter = function(func) {
-    return new TweetList(this.tweets.filter(func));
 };
 
 TweetList.prototype.hide = function() {
@@ -49,7 +32,7 @@ TweetList.prototype.show = function() {
 };
 
 
-TweetList.prototype.loadInside = function(domParent) {
+TweetList.prototype.render = function(domParent) {
     var listElement = document.createElement("ul");
     listElement.className = "tweet-ls";
 
@@ -65,4 +48,12 @@ TweetList.prototype.loadInside = function(domParent) {
 
     domParent.innerText = "";
     domParent.appendChild(listElement);
+};
+
+TweetList.prototype.applyAllFilters = function(activeHashtags, activeMentions) {
+    this.show();
+    this.tweets.forEach(function(tweet) {
+        tweet.filterByHashtag(activeHashtags);
+        tweet.filterByMention(activeMentions);
+    });
 };

@@ -1,6 +1,6 @@
 "use strict";
 
-var FilteredDisplay = function() {
+var DisplayManager = function () {
     this.mentionFilter = new CheckboxFilter("mention", function (tweet) {
         return tweet.mentions;
     }, function (str) {
@@ -19,34 +19,29 @@ var FilteredDisplay = function() {
     this.hashtagFilter.registerReloadCallback(this.applyFiltersCallback.bind(this));
 };
 
-FilteredDisplay.prototype.applyFiltersCallback = function() {
-
-    var filteredList = this.hashtagFilter.returnFilteredElements(this.tweetList);
-    var filteredList = this.mentionFilter.returnFilteredElements(filteredList);
-
-    this.tweetList.hide();
-    filteredList.show();
-    
+DisplayManager.prototype.applyFiltersCallback = function () {
+    this.tweetList.applyAllFilters(this.hashtagFilter.getActiveTags(),
+        this.mentionFilter.getActiveTags());
 };
 
-FilteredDisplay.prototype.generateFilterTags = function() {
-    this.hashtagFilter.reset();
+DisplayManager.prototype.generateFilterTags = function () {
     this.hashtagFilter.extractTags(this.tweetList);
-
-    this.mentionFilter.reset();
     this.mentionFilter.extractTags(this.tweetList);
 };
 
-FilteredDisplay.prototype.load = function(uiContext, data) {
-    if(data.error) {
+DisplayManager.prototype.load = function (uiContext, data) {
+    uiContext.hideLoader();
+
+    if (data.error) {
         uiContext.displayMessage(data.error);
     } else {
         this.tweetList = data.tweets;
 
         this.generateFilterTags();
 
-        this.mentionFilter.loadInside(uiContext.leftPane);
-        this.tweetList.loadInside(uiContext.centerPane);
-        this.hashtagFilter.loadInside(uiContext.rightPane);
+        this.mentionFilter.render(uiContext.leftPane);
+        this.tweetList.render(uiContext.centerPane);
+        this.hashtagFilter.render(uiContext.rightPane);
     }
 };
+

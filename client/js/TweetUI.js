@@ -10,8 +10,6 @@ var TweetUI = function () {
     this.leftPane = this.createLeftPane();
     this.centerPane = this.createCenterPane();
     this.rightPane = this.createRightPane();
-
-    this.inputEventListener = null;
 };
 
 TweetUI.prototype.createElementWithId = function (tag, id) {
@@ -46,7 +44,7 @@ TweetUI.prototype.createRightPane = function () {
     return this.createElementWithId("div", "right-pane");
 };
 
-TweetUI.prototype.loadInside = function (domParent) {
+TweetUI.prototype.render = function (domParent) {
     this.domParent = domParent;
 
     // Empty the parent div
@@ -64,7 +62,6 @@ TweetUI.prototype.loadInside = function (domParent) {
     this.domParent.appendChild(this.contentDiv);
 
     this.hideLoader();
-
 };
 
 TweetUI.prototype.getInput = function () {
@@ -76,6 +73,7 @@ TweetUI.prototype.hideLoader = function () {
 };
 
 TweetUI.prototype.showLoader = function () {
+    this.centerPane.innerText = "";
     this.contentDiv.classList.remove("tweets-noload");
 };
 
@@ -90,16 +88,17 @@ TweetUI.prototype.displayMessage = function (string) {
 
 TweetUI.prototype.getInputTextBoxDOM = function() {
     return this.inputDiv.children[0];
-}
-
-TweetUI.prototype.registerInputAvailableCallback = function (callback) {
-    var inputTextbox = this.getInputTextBoxDOM();
-    console.log(inputTextbox);
-    this.inputEventListener = inputTextbox.addEventListener("keypress", _.partial(this.handleInput, _, callback).bind(this));
 };
 
-TweetUI.prototype.handleInput = function (e, callback) {
+TweetUI.prototype.setInputCallback = function (callback) {
+    var inputTextbox = this.getInputTextBoxDOM();
+    console.log(inputTextbox);
+    inputTextbox.addEventListener("keypress", _.partial(this.handleInput, callback).bind(this));
+};
+
+TweetUI.prototype.handleInput = function (callback, e) {
     if (e.keyCode == 13) {
+        this.showLoader();
         var query = this.getInput();
         console.log("Query", query);
         var parsedQuery = this.queryParser.parseQuery(query);

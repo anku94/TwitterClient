@@ -3,13 +3,13 @@
 (function() {
     var tweetLoader = new TweetLoader();
     var tweetUI = new TweetUI();
-    var filteredDisplay = new FilteredDisplay();
+    var displayManager = new DisplayManager();
 
     window.addEventListener("load", function () {
-        var uiDiv = document.querySelector(".tweet-client");
+        var uiDiv = document.getElementsByClassName("tweet-client")[0];
 
-        tweetUI.loadInside(uiDiv);
-        tweetUI.registerInputAvailableCallback(tweetLoader.loadTweets.bind(tweetLoader));
-        tweetLoader.registerLoadingCompletedCallback(filteredDisplay.load.bind(filteredDisplay, tweetUI));
+        tweetUI.render(uiDiv);
+        tweetUI.setInputCallback(tweetLoader.loadTweets.bind(tweetLoader));
+        tweetLoader.setOnloadCallback(displayManager.load.bind(displayManager, tweetUI));
     });
 })();

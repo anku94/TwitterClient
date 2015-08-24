@@ -9,40 +9,28 @@ var CheckboxFilter = function(propertyName, extractDataFunc, displayFunc) {
     this.getDisplayString = displayFunc;
     this.reloadFunc = null;
 
-    this.activeFilterTags = new Array();
-    this.totalFilterTags = new Array();
-    this.elementDoms = new Array();
+    this.activeFilterTags = [];
+    this.totalFilterTags = [];
+    this.elementDoms = [];
 
 };
 
 CheckboxFilter.prototype.reset = function() {
-    this.activeFilterTags = new Array();
-    this.totalFilterTags = new Array();
-    this.elementDoms = new Array();
+    this.activeFilterTags = [];
+    this.totalFilterTags = [];
+    this.elementDoms = [];
 };
 
 CheckboxFilter.prototype.extractTags = function(tweetList) {
+    this.reset();
+
     tweetList.forEach(function(tweet) {
-        //this.totalFilterTags = this.totalFilterTags.concat(this.extractDataFrom(tweet));
         this.totalFilterTags = _.union(this.totalFilterTags, this.extractDataFrom(tweet));
     }.bind(this));
 };
 
-CheckboxFilter.prototype.returnFilteredElements = function(list) {
-    if(this.activeFilterTags.length == 0) {
-        return list;
-    }
-
-    var filteredList = new TweetList();
-
-    list.forEach(function(tweet) {
-        var commonElements = _.intersection(this.extractDataFrom(tweet), this.activeFilterTags).length;
-        if(commonElements > 0) {
-            filteredList.addTweet(tweet);
-        }
-    }.bind(this));
-
-    return filteredList;
+CheckboxFilter.prototype.getActiveTags = function() {
+    return this.activeFilterTags;
 };
 
 CheckboxFilter.prototype.registerReloadCallback = function(callback) {
@@ -69,7 +57,7 @@ CheckboxFilter.prototype.generateElementDom = function(element) {
     return parentDiv;
 };
 
-CheckboxFilter.prototype.loadInside = function(parentDOM) {
+CheckboxFilter.prototype.render = function(parentDOM) {
     parentDOM.innerText = "";
     if(this.elementDoms.length == 0) {
         // createDoms

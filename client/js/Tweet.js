@@ -63,20 +63,28 @@ Tweet.prototype.hide = function() {
 
 Tweet.prototype.show = function() {
     this.getParentDOM().style.display = "block";
-}
-
-Tweet.prototype.containsHashtag = function(hashtag) {
-    var idx = this.hashtags.indexOf(hashtag);
-    return idx != -1;
 };
 
-Tweet.prototype.containsMention = function(mention) {
-    var idx = this.mentions.indexOf(mention);
-    return idx != -1;
+Tweet.prototype.intersectionExists = function(array1, array2) {
+    return _.intersection(array1, array2).length > 0;
 };
 
-// --------------------TESTS-----------------------
+Tweet.prototype.filterByMention = function(checkedMentions) {
+    if(checkedMentions.length == 0) {
+        return;
+    }
 
-//var testTweet = new Tweet("RT @r0h1n: \"#Airtel & #Revenue\" - 2nd investigative on Airtel\ " +
-//    "& @paranjoygt: #wow, http://t.co/Mz7nqcsNUN, #BanAirtel #DownWithAirtel #Airtel3GisBaad");
+    if(!this.intersectionExists(checkedMentions, this.mentions)) {
+        this.hide();
+    }
+};
 
+Tweet.prototype.filterByHashtag = function(checkedHashtags) {
+    if(checkedHashtags.length == 0) {
+        return;
+    }
+
+    if(!this.intersectionExists(checkedHashtags, this.hashtags)) {
+        this.hide();
+    }
+};
