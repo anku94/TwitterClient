@@ -1,64 +1,67 @@
 "use strict";
 
+// -----------------------------------------------------
+
+var ApiClient = function(apiURL) {
+    this.BASEURL = apiURL;
+};
+
+ApiClient.prototype.fetchTweets = function(userName) {
+    var request = new XMLHttpRequest();
+    var reqURL = this.BASEURL + "/tweets/" + userName;
+    var deferred = $.Deferred();
+    console.log("ReqURL", reqURL);
+
+    request.open("GET", reqURL, true);
+    request.addEventListener("load", function() {
+        if(request.status == "200") {
+            deferred.resolve(request.responseText);
+        } else if(request.status == "404") {
+            deferred.reject("Requested handle does not exist");
+        } else {
+            deferred.reject("Unknown error was encountered");
+        }
+    });
+    request.send(null);
+
+    return deferred.promise();
+};
+
+// -----------------------------------------------------
+
 var TweetLoader = function() {
     this.apiClient = new ApiClient("http://localhost:5000");
-
-    this.tweetList = new TweetList();
-
-    this.callbacksRemaining = 0;
-    this.errorMessage = null;
-
-    this.loadingCompletedCallback = null;
 };
 
-TweetLoader.prototype.loadTweets = function(inputQuery) {
-    this.tweetList.reset();
+TweetLoader.prototype.makeLoadRequest = function(userName) {
+    return this.apiClient.fetchTweets(userName);
+};
 
-    this.callbacksRemaining = inputQuery.mentions.length;
+TweetLoader.prototype.makeMultipleRequests = function(inputQuery) {
+    var loadRequests = [];
 
     inputQuery.mentions.forEach(function(userName) {
-        this.apiClient.fetchTweets(userName, this.tweetsAvailableCallback.bind(this, userName), this.tweetsNotLoadedCallback);
+        loadRequests.push(this.makeLoadRequest(userName));
     }.bind(this));
+
+    return loadRequests;
 };
 
-TweetLoader.prototype.setOnloadCallback = function(callback) {
-    this.loadingCompletedCallback = callback;
-};
+TweetLoader.prototype.loadAllTweets = function(inputQuery) {
+    var loadRequests = this.makeMultipleRequests(inputQuery);
 
-TweetLoader.prototype.tweetsAvailableCallback = function(userName, tweetData) {
-    this.callbacksRemaining--;
+    var loadingCompleted = $.Deferred();
 
-    tweetData = JSON.parse(tweetData);
-
-    if(tweetData.tweets) {
-        this.tweetList.addTweets(tweetData['tweets']);
-    } else {
-        if(this.errorMessage) {
-            this.errorMessage = "Multiple errors";
-        } else {
-            this.errorMessage = "Invalid handle";
+    $.when.apply($, loadRequests).then(function() {
+        var tweetData = [];
+        for(var i = 0; i < arguments.length; i++) {
+            tweetData.push(JSON.parse(arguments[i]));
         }
-    }
+        loadingCompleted.resolve(tweetData);
+    }, function(errorMessage) {
+        loadingCompleted.reject(errorMessage);
+    });
 
-    this.checkLoadingCompleted();
+    return loadingCompleted.promise();
 };
 
-TweetLoader.prototype.checkLoadingCompleted = function() {
-    console.log("Pending callbacks", this.callbacksRemaining);
-
-    if(this.callbacksRemaining > 0) return;
-
-    var response = {};
-    response.tweets = this.tweetList;
-    if(this.errorMessage) response.error = this.errorMessage;
-
-    this.loadingCompletedCallback(response);
-};
-
-TweetLoader.prototype.tweetsNotLoadedCallback = function() {
-    if(this.errorMessage) {
-        this.errorMessage = "Multiple Errors";
-    } else {
-        this.errorMessage = "Internal Error";
-    }
-};

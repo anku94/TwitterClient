@@ -33,7 +33,7 @@ CheckboxFilter.prototype.getActiveTags = function() {
     return this.activeFilterTags;
 };
 
-CheckboxFilter.prototype.registerReloadCallback = function(callback) {
+CheckboxFilter.prototype.setReloadCallback = function(callback) {
     this.reloadFunc = callback;
 };
 
