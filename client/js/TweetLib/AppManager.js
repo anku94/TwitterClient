@@ -35,8 +35,6 @@ AppManager.prototype.addToTweetList = function (tweetList, data) {
 };
 
 AppManager.prototype.handleInput = function (inputQuery) {
-    if(!inputQuery) return;
-
     var loadRequest = this.tweetLoader.loadAllTweets(inputQuery);
 
     loadRequest.then(function (data) {

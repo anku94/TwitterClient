@@ -13,7 +13,9 @@ var TweetUI = function () {
 
     var inputTextbox = this.getInputTextBoxDOM();
     inputTextbox.addEventListener("keypress", function(e) {
-        this.handleInput(e);
+        if(e.keyCode == 13) {
+            this.handleInput(e);
+        }
     }.bind(this));
 };
 
@@ -96,11 +98,9 @@ TweetUI.prototype.getInputTextBoxDOM = function() {
 };
 
 TweetUI.prototype.handleInput = function (e) {
-    if (e.keyCode == 13) {
-        this.showLoader();
-        var query = this.getInput();
-        console.log("Query", query);
-        var parsedQuery = this.queryParser.parseQuery(query);
-        return parsedQuery;
-    }
+    this.showLoader();
+    var query = this.getInput();
+    console.log("Query", query);
+    var parsedQuery = this.queryParser.parseQuery(query);
+    return parsedQuery;
 };
