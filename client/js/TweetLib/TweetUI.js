@@ -1,7 +1,6 @@
 "use strict";
 var TweetUI = function () {
     this.queryParser = new QueryParser();
-    this.x = 5;
 
     this.domParent = null;
     this.contentDiv = null;
