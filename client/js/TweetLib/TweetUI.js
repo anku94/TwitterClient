@@ -10,6 +10,11 @@ var TweetUI = function () {
     this.leftPane = this.createLeftPane();
     this.centerPane = this.createCenterPane();
     this.rightPane = this.createRightPane();
+
+    var inputTextbox = this.getInputTextBoxDOM();
+    inputTextbox.addEventListener("keypress", function(e) {
+        this.handleInput(e);
+    }.bind(this));
 };
 
 TweetUI.prototype.createElementWithId = function (tag, id) {
@@ -90,18 +95,12 @@ TweetUI.prototype.getInputTextBoxDOM = function() {
     return this.inputDiv.children[0];
 };
 
-TweetUI.prototype.setInputCallback = function (callback) {
-    var inputTextbox = this.getInputTextBoxDOM();
-    console.log(inputTextbox);
-    inputTextbox.addEventListener("keypress", _.partial(this.handleInput, callback).bind(this));
-};
-
-TweetUI.prototype.handleInput = function (callback, e) {
+TweetUI.prototype.handleInput = function (e) {
     if (e.keyCode == 13) {
         this.showLoader();
         var query = this.getInput();
         console.log("Query", query);
         var parsedQuery = this.queryParser.parseQuery(query);
-        callback(parsedQuery);
+        return parsedQuery;
     }
 };

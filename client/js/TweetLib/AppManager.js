@@ -3,6 +3,7 @@
 var AppManager = function () {
     this.tweetUI = new TweetUI();
     this.tweetLoader = new TweetLoader();
+    this.connector = new Connector();
 
     this.mentionFilter = new CheckboxFilter("mention", function (tweet) {
         return tweet.mentions;
@@ -22,9 +23,9 @@ var AppManager = function () {
 AppManager.prototype.init = function (uiDiv) {
     this.tweetUI.render(uiDiv);
 
-    this.tweetUI.setInputCallback(this.handleInput.bind(this));
-    this.mentionFilter.setReloadCallback(this.applyFiltersCallback.bind(this));
-    this.hashtagFilter.setReloadCallback(this.applyFiltersCallback.bind(this));
+    this.connector.connect(this.tweetUI, "handleInput", this, "handleInput");
+    this.connector.connect(this.mentionFilter, "filterTrigger", this, "applyFiltersCallback");
+    this.connector.connect(this.hashtagFilter, "filterTrigger", this, "applyFiltersCallback");
 };
 
 AppManager.prototype.addToTweetList = function (tweetList, data) {
@@ -34,6 +35,8 @@ AppManager.prototype.addToTweetList = function (tweetList, data) {
 };
 
 AppManager.prototype.handleInput = function (inputQuery) {
+    if(!inputQuery) return;
+
     var loadRequest = this.tweetLoader.loadAllTweets(inputQuery);
 
     loadRequest.then(function (data) {
