@@ -1,7 +1,5 @@
 "use strict";
 
-// -----------------------------------------------------
-
 var ApiClient = function(apiURL) {
     this.BASEURL = apiURL;
 };
@@ -26,8 +24,6 @@ ApiClient.prototype.fetchTweets = function(userName) {
 
     return deferred.promise();
 };
-
-// -----------------------------------------------------
 
 var TweetLoader = function() {
     this.apiClient = new ApiClient("http://localhost:5000");
