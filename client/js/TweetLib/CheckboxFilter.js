@@ -4,7 +4,7 @@ define([
     'dojo/topic',
     'dojo/on',
     'dojox/collections/Set',
-    'TweetApp/widget/CheckboxWidget'
+    'TweetLib/widgets/CheckboxWidget'
 ], function (declare,
              query,
              topic,

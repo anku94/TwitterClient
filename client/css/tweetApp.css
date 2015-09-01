@@ -52,20 +52,6 @@
     margin: 0 auto;
 }
 
-.checkboxWidget {
-    padding: 15px;
-    word-wrap: break-word;
-}
-
-.checkboxWidget:nth-child(odd) {
-    background-color: #D4F4FF;
-}
-
-.checkboxWidget:nth-child(even) {
-    background-color: #EDF9FC;
-}
-
 .tweet-message {
     margin: 40px;
 }
-

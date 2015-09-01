@@ -1,6 +1,6 @@
 define([
     'dojo/_base/declare',
-    'TweetApp/widget/TweetWidget'
+    'TweetLib/widgets/TweetWidget'
 ], function (
     declare,
     TweetWidget
