@@ -1,5 +1,5 @@
 require([
-    'TweetLib-Dojo/AppManager',
+    'TweetLib/AppManager',
     'dojo/domReady!'
 ], function(
     AppManager

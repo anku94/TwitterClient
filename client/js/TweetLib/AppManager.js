@@ -1,10 +1,10 @@
 define([
     'dojo/_base/declare',
     'dojo/topic',
-    'TweetLib-Dojo/TweetLoader',
-    'TweetLib-Dojo/TweetUI',
-    'TweetLib-Dojo/TweetList',
-    'TweetLib-Dojo/CheckboxFilter'
+    'TweetLib/TweetLoader',
+    'TweetLib/TweetUI',
+    'TweetLib/TweetList',
+    'TweetLib/CheckboxFilter'
 ], function(
     declare,
     topic,
