@@ -1,0 +1,22 @@
+div.tweetWidget {
+    padding: 12px;
+    padding-left: 10px;
+    word-wrap: break-word;
+}
+
+div.tweetWidget:nth-child(even) {
+    background-color: #EAF9EE;
+}
+
+div.tweetWidget:nth-child(odd) {
+    background-color: #F6FCF7;
+}
+
+span.tweet-hashtag {
+    color: #B51638;
+}
+
+span.tweet-mention {
+    color: #172FB3;
+}
+

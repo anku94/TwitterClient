@@ -44,7 +44,8 @@ def get_tweets(user_name):
         tweetData = []
         for tweet in tweets:
             if tweet.retweeted_status:
-                tweetData.append("RT @" + tweet.retweeted_status.user.screen_name + ": " + hp.unescape(tweet.retweeted_status.text))
+                curTweet = "RT @" + tweet.retweeted_status.user.screen_name + ": " + hp.unescape(tweet.retweeted_status.text)
             else:
-                tweetData.append(hp.unescape(tweet.text))
+                curTweet = hp.unescape(tweet.text)
+            tweetData.append({"tweet": curTweet})
         return {'data': tweetData}

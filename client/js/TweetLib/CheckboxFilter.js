@@ -1,97 +1,113 @@
-"use strict";
+define([
+    'dojo/_base/declare',
+    'dojo/query',
+    'dojo/topic',
+    'dojo/on',
+    'dojox/collections/Set',
+    'TweetApp/widget/CheckboxWidget'
+], function (declare,
+             query,
+             topic,
+             on,
+             Set,
+             CheckboxWidget) {
+    return declare(null, {
 
-var CheckboxFilter = function(propertyName, extractDataFunc, displayFunc) {
-    this.propertyName = propertyName;
+        allTags: null,
+        activeTags: null,
+        _tweetList: null,
+        _parentDOM: null,
+        _extractData: null,
+        _widgets: null,
 
-    this.elementClassName = "checkbox-element";
+        constructor: function (tweetList, parentDOM, extractDataFunc, displayFunc) {
+            //var data = {data: "SomeElement"};
+            //var w = new CheckboxWidget(data, function(s) { return '#' + s; });
+            //w.placeAt(parentDOM);
 
-    this.extractDataFrom = extractDataFunc;
-    this.getDisplayString = displayFunc;
+            this.allTags = [];
+            this.activeTags = [];
 
-    this.activeFilterTags = [];
-    this.totalFilterTags = [];
-    this.elementDoms = [];
+            this._tweetList = tweetList;
+            this._parentDOM = parentDOM;
+            this._extractData = extractDataFunc;
+            this._displayFunc = displayFunc;
 
-};
+            //topic.subscribe("tweetsLoaded", this.loadFilter.bind(this));
+        },
 
-CheckboxFilter.prototype.reset = function() {
-    this.activeFilterTags = [];
-    this.totalFilterTags = [];
-    this.elementDoms = [];
-};
+        extractTags: function (tweetList) {
+            var res = [];
 
-CheckboxFilter.prototype.extractTags = function(tweetList) {
-    this.reset();
+            tweetList.forEach(function (tweet) {
+                res = Set.union(res, this._extractData(tweet)).toArray();
+            }.bind(this));
 
-    tweetList.forEach(function(tweet) {
-        this.totalFilterTags = _.union(this.totalFilterTags, this.extractDataFrom(tweet));
-    }.bind(this));
-};
+            return res;
+        },
 
-CheckboxFilter.prototype.getActiveTags = function() {
-    return this.activeFilterTags;
-};
+        reset: function () {
+            if (this._widgets) {
+                this._widgets.forEach(function (widget) {
+                    widget.destroyRecursive();
+                });
+            }
 
-CheckboxFilter.prototype.generateElementDom = function(element) {
-    var parentDiv = document.createElement("div");
-    parentDiv.className = this.elementClassName;
+            this._widgets = null;
+            this.allTags = [];
+            this.activeTags = [];
+        },
 
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = this.propertyName;
-    checkbox.value = element;
-    checkbox.id = element;
+        loadFilter: function () {
+            this.reset();
+            this.allTags = this.extractTags(this._tweetList);
+            this.loadDOM(this._parentDOM);
+        },
 
-    var labelElement = document.createElement("label");
-    labelElement.innerText = this.getDisplayString(element);
-    labelElement.htmlFor = element;
+        loadDOM: function (parentDOM) {
+            parentDOM.innerText = "";
 
-    parentDiv.appendChild(checkbox);
-    parentDiv.appendChild(labelElement);
+            if (!this._widgets) {
+                this._widgets = [];
+                this.allTags.forEach(function (tag) {
+                    var widget = new CheckboxWidget({data: tag}, this._displayFunc);
+                    this._widgets.push(widget);
+                }.bind(this));
+            }
 
-    return parentDiv;
-};
+            this._widgets.forEach(function (widget) {
+                widget.placeAt(parentDOM);
+            });
 
-CheckboxFilter.prototype.render = function(parentDOM) {
-    parentDOM.innerText = "";
-    if(this.elementDoms.length == 0) {
-        // createDoms
-        this.totalFilterTags.forEach(function(tag) {
-            var domElement = this.generateElementDom(tag);
-            this.elementDoms.push(domElement);
-        }.bind(this));
-    }
+            on(parentDOM, "input:click", this.clickHandler.bind(this));
+        },
 
-    this.elementDoms.forEach(function(domElement) {
-        parentDOM.appendChild(domElement);
-    });
+        addFilterTag: function (tag) {
+            var idx = this.activeTags.indexOf(tag);
+            if (idx < 0) {
+                this.activeTags.push(tag);
+            }
+        },
 
-    parentDOM.addEventListener("click", function(e) {
-        this.filterTrigger(e);
-    }.bind(this));
-};
+        removeFilterTag: function (tag) {
+            var idx = this.activeTags.indexOf(tag);
+            if (idx > -1) {
+                this.activeTags.splice(idx, 1);
+            }
+        },
 
-CheckboxFilter.prototype.filterTrigger = function(e) {
-    var target = e.target;
-    if(target.nodeName == "INPUT") {
-        if(target.checked) {
-            this.addFilterTag(target.value);
-        } else {
-            this.removeFilterTag(target.value);
+        getActiveTags: function () {
+            return this.activeTags;
+        },
+
+        clickHandler: function (e) {
+            var target = e.target;
+            if (target.checked) {
+                this.addFilterTag(target.value);
+            } else {
+                this.removeFilterTag(target.value);
+            }
+            topic.publish("filterClicked");
         }
-    }
-};
-
-CheckboxFilter.prototype.addFilterTag = function(tag) {
-    var idx = this.activeFilterTags.indexOf(tag);
-    if(idx < 0) {
-        this.activeFilterTags.push(tag);
-    }
-};
-
-CheckboxFilter.prototype.removeFilterTag = function(tag) {
-    var idx = this.activeFilterTags.indexOf(tag);
-    if(idx > -1) {
-        this.activeFilterTags.splice(idx, 1);
-    }
-};
+    });
+});

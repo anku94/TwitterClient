@@ -48,43 +48,20 @@
     margin: 0;
 }
 
-.tweet-ls li {
-    list-style-type: none;
-    padding: 12px;
-    padding-left: 10px;
-    word-wrap: break-word;
-}
-
-.tweet-ls li:nth-child(even) {
-    background-color: #EAF9EE;
-}
-
-.tweet-ls li:nth-child(odd) {
-    background-color: #F6FCF7;
-}
-
-.tweet-hashtag {
-    color: #B51638;
-}
-
-.tweet-mention {
-    color: #172FB3;
-}
-
 .loader-img {
     margin: 0 auto;
 }
 
-.checkbox-element {
+.checkboxWidget {
     padding: 15px;
     word-wrap: break-word;
 }
 
-.checkbox-element:nth-child(odd) {
+.checkboxWidget:nth-child(odd) {
     background-color: #D4F4FF;
 }
 
-.checkbox-element:nth-child(even) {
+.checkboxWidget:nth-child(even) {
     background-color: #EDF9FC;
 }
 

@@ -8,6 +8,7 @@ app = Flask("Twitter Backend")
 @app.before_first_request
 def initialize():
     twitter_api.init()
+    pass
 
 @app.route("/")
 @crossdomain("*")
@@ -23,6 +24,8 @@ def display_tweets(userName):
         tweets.append("RT @User2: #NewHashTag #coolShitBrah tweet first");
         tweets.append("RT @User3: #NewHashTag #coolShitBrah tweet first");
         tweets.append("RT @User4: @hiianubhav @kansal.k #NewHashTag #coolShitBrah tweet first");
+        for idx, i in enumerate(tweets):
+            tweets[idx] = {"tweet": i}
         return jsonify({'tweets': tweets})
 
     resp = twitter_api.get_tweets(userName)

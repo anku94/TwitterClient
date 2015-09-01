@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "dojo": "1.7.8",
+    "dijit": "git://github.com/dojo/dijit.git#1.7.8",
+    "dojox": "git://github.com/dojo/dojox.git#1.7.8",
+    "util": "git://github.com/dojo/util.git#1.7.8"
+  }
+}

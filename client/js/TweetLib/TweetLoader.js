@@ -1,63 +1,57 @@
-"use strict";
+define([
+    'dojo/_base/declare',
+    'dojo/_base/xhr',
+    'dojo/topic',
+    'dojo/DeferredList',
+    'dojo/_base/array'
+], function (declare,
+             xhr,
+             topic,
+             DeferredList,
+             array) {
+    return declare(null, {
+        BASEURL: null,
 
-var ApiClient = function(apiURL) {
-    this.BASEURL = apiURL;
-};
+        constructor: function (BASEURL) {
+            this.BASEURL = BASEURL;
+        },
 
-ApiClient.prototype.fetchTweets = function(userName) {
-    var request = new XMLHttpRequest();
-    var reqURL = this.BASEURL + "/tweets/" + userName;
-    var deferred = $.Deferred();
-    console.log("ReqURL", reqURL);
+        sendRequest: function (userName) {
+            return xhr.get({
+                url: this.BASEURL + "/" + userName,
+                handleAs: "json",
+            })
+        },
 
-    request.open("GET", reqURL, true);
-    request.addEventListener("load", function() {
-        if(request.status == "200") {
-            deferred.resolve(request.responseText);
-        } else if(request.status == "404") {
-            deferred.reject("Requested handle does not exist");
-        } else {
-            deferred.reject("Unknown error was encountered");
+        loadTweets: function (query) {
+            var requestsList = [];
+            query.forEach(function (handle) {
+                var request = this.sendRequest(handle);
+                requestsList.push(request);
+            }.bind(this));
+
+            var deferredList = new DeferredList(requestsList);
+            deferredList.then(function (data) {
+                var status = array.map(data, function (element) {
+                    return element[0];
+                });
+
+                if (array.every(status, function (val) { return val == true; })) {
+                    this.dataCallback(data);
+                } else {
+                    this.errorCallback("Unknown error was encountered");
+                }
+            }.bind(this));
+        },
+
+        dataCallback: function (data) {
+            console.log("DATA", data);
+            topic.publish("tweetsFetched", data);
+        },
+
+        errorCallback: function (error) {
+            console.log("ERROR", error);
+            topic.publish("error", "An internal error was encountered");
         }
     });
-    request.send(null);
-
-    return deferred.promise();
-};
-
-var TweetLoader = function() {
-    this.apiClient = new ApiClient("http://localhost:5000");
-};
-
-TweetLoader.prototype.makeLoadRequest = function(userName) {
-    return this.apiClient.fetchTweets(userName);
-};
-
-TweetLoader.prototype.makeMultipleRequests = function(inputQuery) {
-    var loadRequests = [];
-
-    inputQuery.mentions.forEach(function(userName) {
-        loadRequests.push(this.makeLoadRequest(userName));
-    }.bind(this));
-
-    return loadRequests;
-};
-
-TweetLoader.prototype.loadAllTweets = function(inputQuery) {
-    var loadRequests = this.makeMultipleRequests(inputQuery);
-
-    var loadingCompleted = $.Deferred();
-
-    $.when.apply($, loadRequests).then(function() {
-        var tweetData = [];
-        for(var i = 0; i < arguments.length; i++) {
-            tweetData.push(JSON.parse(arguments[i]));
-        }
-        loadingCompleted.resolve(tweetData);
-    }, function(errorMessage) {
-        loadingCompleted.reject(errorMessage);
-    });
-
-    return loadingCompleted.promise();
-};
-
+});

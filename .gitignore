@@ -1,6 +1,9 @@
 *.swp
 *.pyc
+*.log
 .idea
 server/appConfig.ini
 poc.html
 node-server
+node_modules
+libs
