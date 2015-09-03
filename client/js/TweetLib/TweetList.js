@@ -2,18 +2,13 @@ define([
     'dojo/_base/declare',
     'TweetLib/widgets/TweetWidget'
 ], function (
-    declare,
-    TweetWidget
+    declare, TweetWidget
 ) {
     return declare(null, {
         tweetWidgets: null,
 
         constructor: function (jsonData) {
             this.tweetWidgets = new Array();
-
-            if(jsonData) {
-                this.addTweets(jsonData);
-            }
         },
 
         reset: function() {

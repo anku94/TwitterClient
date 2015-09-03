@@ -1,51 +1,45 @@
 define([
     'dojo/_base/declare',
+    'dojo/dom',
     'dojo/topic',
     'TweetLib/TweetLoader',
-    'TweetLib/TweetUI',
+    'TweetLib/widgets/UIWidget',
     'TweetLib/TweetList',
     'TweetLib/CheckboxFilter'
 ], function(
-    declare,
-    topic,
-    TweetLoader,
-    TweetUI,
-    TweetList,
-    CheckboxFilter
+    declare, dom, topic, TweetLoader, UIWidget, TweetList, CheckboxFilter
 ) {
     return declare(null, {
         BASEURL: "http://localhost:5000/tweets",
         _tweetLoader: null,
         _tweetUI: null,
-        _tweetList: null,
+        _elementList: null,
         _hashtagFilter: null,
         _mentionFilter: null,
 
-        constructor: function(kw) {
+        constructor: function() {
             this._tweetLoader = new TweetLoader(this.BASEURL);
-            this._tweetUI = new TweetUI();
-            this._tweetList = new TweetList();
+            this._tweetUI = new UIWidget();
+            this._elementList = new TweetList();
 
+            this._tweetUI.placeAt(dom.byId("tweet-client"));
             this._tweetUI.init();
-            this._mentionFilter = new CheckboxFilter(this._tweetList, this._tweetUI.leftPane, function(tweet) {
+
+            this._mentionFilter = new CheckboxFilter(this._elementList, this._tweetUI.leftPane, function(tweet) {
                 return tweet.mentions;
             }, function(str) {
                 return '@' + str;
             });
 
-            this._hashtagFilter = new CheckboxFilter(this._tweetList, this._tweetUI.rightPane, function(tweet) {
+            this._hashtagFilter = new CheckboxFilter(this._elementList, this._tweetUI.rightPane, function(tweet) {
                 return tweet.hashtags;
             }, function(str) {
                 return '#' + str;
             });
 
-            //var req = this._tweetLoader.loadTweets(["anku94", "hiianubhav"]);
-            //var req = this._tweetLoader.loadTweets(["anku94"]);
-
             topic.subscribe("inputAvailable", this.inputHandler.bind(this));
             topic.subscribe("tweetsFetched", this.tweetHandler.bind(this));
             topic.subscribe("error", this.errorHandler.bind(this));
-            topic.subscribe("tweetsLoaded", this.onLoadHandler.bind(this));
             topic.subscribe("filterClicked", this.filterHandler.bind(this));
         },
 
@@ -61,10 +55,9 @@ define([
             return handles;
         },
 
-        inputHandler: function() {
+        inputHandler: function(query) {
             this._tweetUI.showLoader();
 
-            var query = this._tweetUI.getInputDOM().value;
             var handles = this.parseQuery(query);
             this._tweetLoader.loadTweets(handles);
         },
@@ -72,16 +65,12 @@ define([
         tweetHandler: function(data) {
             this._tweetUI.hideLoader();
 
-            this._tweetList.reset();
+            this._elementList.reset();
             data.forEach(function(list) {
-                this._tweetList.addTweets(list[1]);
+                this._elementList.addTweets(list[1]);
             }.bind(this));
-            this._tweetList.loadDOM(this._tweetUI.centerPane);
+            this._elementList.loadDOM(this._tweetUI.centerPane);
 
-            topic.publish("tweetsLoaded");
-        },
-
-        onLoadHandler: function() {
             this._mentionFilter.loadFilter();
             this._hashtagFilter.loadFilter();
         },
@@ -91,7 +80,7 @@ define([
         },
 
         filterHandler: function() {
-            this._tweetList.applyAllFilters(this._mentionFilter.getActiveTags(), this._hashtagFilter.getActiveTags());
+            this._elementList.applyAllFilters(this._mentionFilter.getActiveTags(), this._hashtagFilter.getActiveTags());
         }
     });
 });

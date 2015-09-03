@@ -5,25 +5,12 @@
         <meta charset="UTF-8">
 
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="css/tweetApp.css">
+        <link rel="stylesheet" href="js/TweetLib/widgets/css/UIWidget.css">
         <link rel="stylesheet" href="js/TweetLib/widgets/css/TweetWidget.css">
         <link rel="stylesheet" href="js/TweetLib/widgets/css/CheckboxWidget.css">
     </head>
     <body>
-        <div id="wrapper" class="tweet-client">
-            <div id="tweets-input">
-                <input type="text" name="username" id="tweets-username-input" placeholder="@twitterUser1, @twitterUser2 ... " />
-            </div>
-            <div id="tweets" class="tweets-noload">
-                <div id="left-pane">
-                </div>
-
-                <div id="center-pane">
-                </div>
-
-                <div id="right-pane">
-                </div>
-            </div>
+        <div id="tweet-client">
         </div>
     <script>
         var dojoConfig = {
@@ -32,8 +19,7 @@
             packages: [
                     'dojo',
                     'dijit',
-                    'dojox',
-                    'util'
+                    'dojox'
             ]
         }
     </script>

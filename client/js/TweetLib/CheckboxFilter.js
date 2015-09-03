@@ -5,35 +5,24 @@ define([
     'dojo/on',
     'dojox/collections/Set',
     'TweetLib/widgets/CheckboxWidget'
-], function (declare,
-             query,
-             topic,
-             on,
-             Set,
-             CheckboxWidget) {
+], function (declare, query, topic, on, Set, CheckboxWidget) {
     return declare(null, {
 
         allTags: null,
         activeTags: null,
-        _tweetList: null,
+        _elementList: null,
         _parentDOM: null,
         _extractData: null,
         _widgets: null,
 
-        constructor: function (tweetList, parentDOM, extractDataFunc, displayFunc) {
-            //var data = {data: "SomeElement"};
-            //var w = new CheckboxWidget(data, function(s) { return '#' + s; });
-            //w.placeAt(parentDOM);
-
+        constructor: function (elementList, parentDOM, extractDataFunc, displayFunc) {
             this.allTags = [];
             this.activeTags = [];
 
-            this._tweetList = tweetList;
+            this._elementList = elementList;
             this._parentDOM = parentDOM;
             this._extractData = extractDataFunc;
             this._displayFunc = displayFunc;
-
-            //topic.subscribe("tweetsLoaded", this.loadFilter.bind(this));
         },
 
         extractTags: function (tweetList) {
@@ -60,7 +49,7 @@ define([
 
         loadFilter: function () {
             this.reset();
-            this.allTags = this.extractTags(this._tweetList);
+            this.allTags = this.extractTags(this._elementList);
             this.loadDOM(this._parentDOM);
         },
 

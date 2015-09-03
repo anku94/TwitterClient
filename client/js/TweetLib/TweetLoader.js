@@ -4,11 +4,9 @@ define([
     'dojo/topic',
     'dojo/DeferredList',
     'dojo/_base/array'
-], function (declare,
-             xhr,
-             topic,
-             DeferredList,
-             array) {
+], function (
+    declare, xhr, topic, DeferredList, array
+) {
     return declare(null, {
         BASEURL: null,
 
@@ -19,7 +17,7 @@ define([
         sendRequest: function (userName) {
             return xhr.get({
                 url: this.BASEURL + "/" + userName,
-                handleAs: "json",
+                handleAs: "json"
             })
         },
 

@@ -8,7 +8,9 @@ define([
     "dojo/_base/fx",
     "dojo/_base/lang",
     "dojo/on"
-], function (declare, _WidgetBase, _TemplatedMixin, Set, template, domStyle, baseFx, lang, on) {
+], function (
+    declare, _WidgetBase, _TemplatedMixin, Set, template, domStyle
+) {
     return declare([_WidgetBase, _TemplatedMixin], {
         templateString: template,
         baseClass: "tweetWidget",

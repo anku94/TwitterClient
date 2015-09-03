@@ -18,16 +18,6 @@ def display_root():
 @app.route("/tweets/<userName>")
 @crossdomain("*")
 def display_tweets(userName):
-    if userName == "anku94":
-        tweets = []
-        tweets.append("RT @User1: #Abc #def tweet first");
-        tweets.append("RT @User2: #NewHashTag #coolShitBrah tweet first");
-        tweets.append("RT @User3: #NewHashTag #coolShitBrah tweet first");
-        tweets.append("RT @User4: @hiianubhav @kansal.k #NewHashTag #coolShitBrah tweet first");
-        for idx, i in enumerate(tweets):
-            tweets[idx] = {"tweet": i}
-        return jsonify({'tweets': tweets})
-
     resp = twitter_api.get_tweets(userName)
 
     if resp['data']:

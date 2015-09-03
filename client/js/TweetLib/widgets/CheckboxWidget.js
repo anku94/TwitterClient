@@ -7,7 +7,9 @@ define([
     "dojo/_base/fx",
     "dojo/_base/lang",
     "dojo/on"
-], function (declare, _WidgetBase, _TemplatedMixin, template, domStyle, baseFx, lang, on) {
+], function (
+    declare, _WidgetBase, _TemplatedMixin, template
+) {
     return declare([_WidgetBase, _TemplatedMixin], {
         templateString: template,
         baseClass: "checkboxWidget",
@@ -25,8 +27,6 @@ define([
         _setDataAttr: function (data) {
             this.checkboxNode.name = data;
             this.labelNode.innerText = this.displayFunc(data);
-
-            //this.labelNode.innerText = data;
         }
     });
 });
